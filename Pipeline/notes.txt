@@ -1,0 +1,104 @@
+Recommendations from Greg:
+    The processor state includes the contents of registers, buffers, cache, and data memory
+    at each cycle. You do not need to implement exception/interrupt handling.
+
+    In each cycle, execute each pipeline stage in REVERSE order.
+    First handle the WB stage, then the MEM/ALU stages, then ISSUE stage,
+    then the IF stage.
+    By executing the pipelines in this order, you will ensure that the cache
+    is updated in the proper order, and you will not have collisions in the
+    buffer between pipeline stages
+
+    Each Unit needs to be its own class and will need to have specific global variables depending on functionality 
+
+    CODE FROM GREGS NOTES:
+
+    def asr(source, shamt):
+        return source >> shamt
+
+    def ls(source, shamt):
+       return(source % (1 << 64)) >> shamt
+
+
+    def print(source, shamt, result, op_type):
+        print('source ' + str(source) + '\tshamt: '
+            + str(shamt) + op_type + '\t' + str(result))
+
+    def main():
+        source = 150
+        shamt = 1
+
+        while(shamt < 10):
+            result = asr(source,shamt)
+            print(source, shamt, result, '  asr')
+            expansion = '{0:64b}'.format(result)
+            print "result expansion:    " + expansion
+
+            print "             ===========================================================\n\n"
+
+            result = lsr(source, shamt)
+            print(source, shamt, result, '  lsr')
+            expansion = '{0:64b}'.format(result)
+            print "result expansion:    " + expansion
+
+            print "\n           ===========================================================\n\n"
+
+            shamt +=1
+main()
+
+
+
+# class ALU_unit:
+#     the input will be preALUBUF
+#         preALUBUFF will hold two instructions at the same time [instruction index, instruction index]
+#
+#         if the opcodestr == I or  R instructions
+#             postALuBUFF = register[[Arg3 + arg1], i] #
+#
+#             preALUBUFF indexes will be updated first index replaced by second index
+#                 second index = -1
+#
+#     the output will postALUBUff
+#         postALUBUFF will hold [data, instruction] data will be the number in the instruction
+#
+# class mem_unit:
+#     input preMemBuff will hold two instructions at the same time [instruction index, instruction index]
+#
+#     if instruction index is STUR(cannot write to the cache)(look back on slide 52 on deck 16) or LDUR
+#         check cache for address (cache.accessMem(memIndex, i, isSW, arg1))
+#     if miss
+#         cache will return miss on first cycle and handle memory access
+#         and cache load in the same cycle and should return a hit on next cycle
+#     if hit
+#         return true with value
+#         update preMEmBuff indexes will be updated first index replaced by second index
+#               second index = -1 in the cache
+#         here will store or load mem values
+#
+#
+#     output postMemBuff will hold [data, instruction] data will be the number in the instruction
+#
+#     indexes will be updated first index replaced by second index          second index = -1 in the cache
+
+# class Issue_Unit: (look back at slide deck16)
+#     input preIssueBuff will hold four instruction indexes
+#
+#     loop thru preIssueBuff to check for hazard
+#         if not hazard
+#             set first two instruction indexes to preMemBuffer or preALuBuffer
+#
+#     output prememBuffer and preALuBuffer and both first num is index, second is index
+
+# class Fetch:
+#     takes all the lists from dissassembler
+#
+#     go over slide deck when we get here
+#
+#     output will be issueBuffer
+#
+# class cache:
+#     def flush will write out all dirty blocks to memory at the end
+#     def accessMem will take memIndex, instructionIndex, isWritetoMem, datatoWrite
+#         returns boolean got a hit and data/instruction at cache location
+#
+#
